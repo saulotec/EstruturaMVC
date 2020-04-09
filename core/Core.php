@@ -7,6 +7,7 @@ class Core {
             $url .= $_GET['url'];
         }
 
+        $params = Array();
         if(!empty($url) && $url != '/') { // se a url não estiver vazia e for diferente de uma /barra segue o bloco de  comando.
             $url = explode('/',$url);
             array_shift($url);//remove o primeiro registro do array, tornando o próximo registro chave 0 do array, isso foi feito pq o meu  array[0] erra nulo..
@@ -16,8 +17,13 @@ class Core {
 
             if(isset($url[0]) && !empty($url)) {// se através da url veio o novo url[0] que antes era o $url[1], meu action será ele.
                 $currentAction = $url[0];
+                array_shift($url);
             }else{// caso contrário meu action é o padrão, o index.
                 $currentAction ='index';
+            }
+            
+            if(count($url) > 0){
+                $params = $url[0];
             }
            
 
@@ -25,8 +31,8 @@ class Core {
             $currentController = 'homeController';
             $currentAction = 'index';
         }
-        echo "CONTROLLER: ".$currentController."<br/>";
-        echo "ACTION: ".$currentAction."<br/>";
+        
+        $c = new $currentController; //Estou instanciando uma classe, através do index que tem o autoload que identificará qual é a classe.
 
-    }
+        call_user_func_array(array($c, $currentAction), $params);//Função usada quando eu quero pegar um método dentro da minha classe e esse método etá numa váriavel e eu preciso passar um parâmetro tbm em forma de variável. $c é minha classe, $currenteAction é o método e $params o parâmetro. primeiro parâmetro da função é um array($c, $currentController) e o segundo parâmetro é $params, parâmetro do método.
 }
